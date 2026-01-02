@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>chicago_public.cpd_parks drift report</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
+    .top { display:flex; gap: 12px; align-items:center; flex-wrap: wrap; }
+    .badge { border: 1px solid #e5e7eb; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e6edf3; padding: 16px; border-radius: 12px; overflow:auto; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h1 style="margin:0;">Schema Drift Report</h1>
+    <span class="badge"><a href="/sample_screenshots/parks.html">latest</a></span>
+  </div>
+  <p style="color:#6b7280;">Deterministic report.</p>
+  <pre># Overview
+- **Table:** `chicago_public.cpd_parks`
+- **Timestamp:** `2025-12-29T20:00:50Z`
+- **Status:** `NO_DATA`
+- **Contract version:** `v1_2_1`
+- **DataLocation:** `s3://YOUR_BUCKET/data/cpd_parks/`
+
+# Result
+No files were found under the configured DataLocation prefix. Drift check was skipped to avoid confusion.
+
+## Next steps
+1. Verify the S3 prefix is correct (bucket/prefix).
+2. Upload at least one data file to that prefix.
+3. Re-run the drift check.</pre>
+</body>
+</html>

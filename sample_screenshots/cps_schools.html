@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>chicago_public.cps_schools drift report</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
+    .top { display:flex; gap: 12px; align-items:center; flex-wrap: wrap; }
+    .badge { border: 1px solid #e5e7eb; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e6edf3; padding: 16px; border-radius: 12px; overflow:auto; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h1 style="margin:0;">Schema Drift Report</h1>
+    <span class="badge"><a href="/sample_screenshots/cps_schools.html">latest</a></span>
+  </div>
+  <p style="color:#6b7280;">Deterministic report.</p>
+  <pre># Overview
+- **Table:** `chicago_public.cps_schools`
+- **Timestamp:** `2025-12-29T20:00:49Z`
+- **Status:** `DRIFT_FOUND`
+- **Contract version:** `v1_0_0`
+- **DataLocation:** `s3://YOUR_BUCKET/data/cps_schools/`
+
+# Drift summary
+- **Overall severity:** `BREAKING`
+- **Counts:** SAFE=1, RISKY=1, BREAKING=1
+
+# Changes
+- **SAFE** `addition` on `student_attendance_year_2`
+  - after: `string`
+  - rationale: New nullable column added in Glue.
+- **RISKY** `type_change` on `school_id`
+  - before: `int`
+  - after: `bigint`
+  - rationale: Widening numeric range in Glue.
+- **BREAKING** `removal` on `fax`
+  - before: `string`
+  - rationale: Column removed from Glue schema.
+
+# Recommended actions
+1. Treat as breaking: notify downstream owners and pause dependent pipelines if needed.
+2. Add a compatibility layer (view/CTAS) or dual-write during migration.
+3. Version the contract and communicate a deprecation window.</pre>
+</body>
+</html>

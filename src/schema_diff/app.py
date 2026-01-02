@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import time
 from datetime import datetime, timezone
@@ -11,6 +12,8 @@ from shared.diff import compute_diff
 s3 = boto3.client("s3")
 glue = boto3.client("glue")
 lambda_client = boto3.client("lambda")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def _read_json_s3(bucket: str, key: str) -> Dict[str, Any]:
@@ -130,11 +133,14 @@ def _write_diff(report_bucket: str, glue_db: str, glue_table: str, payload: Dict
 
 
 def _invoke_report_generator(function_name: str, bucket: str, key: str) -> None:
-    lambda_client.invoke(
-        FunctionName=function_name,
-        InvocationType="Event",  # async
-        Payload=json.dumps({"diff_s3": {"bucket": bucket, "key": key}}).encode("utf-8"),
-    )
+    try:
+        lambda_client.invoke(
+            FunctionName=function_name,
+            InvocationType="Event",  # async
+            Payload=json.dumps({"diff_s3": {"bucket": bucket, "key": key}}).encode("utf-8"),
+        )
+    except Exception:
+        logger.exception("Failed to invoke report generator")
 
 
 def _no_data_payload(glue_db: str, glue_table: str, contract: Dict[str, Any], contract_bucket: str, contract_key: str, report_bucket: str, data_location: str) -> Dict[str, Any]:
@@ -210,7 +216,12 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
         _ensure_glue_table(glue_db, glue_table, data_location, file_format, contract_doc)
 
     contract_cols = contract_doc.get("columns", [])
-    actual_cols = _load_glue_schema(glue_db, glue_table)
+    try:
+        actual_cols = _load_glue_schema(glue_db, glue_table)
+    except Exception as e:
+        payload = _error_payload(glue_db, glue_table, contract_bucket, contract_key, report_bucket, data_location, f"{type(e).__name__}: {e}")
+        diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+        return {"table": f"{glue_db}.{glue_table}", "status": "ERROR", "diff_s3": {"bucket": report_bucket, "key": diff_key}}
     diff_doc = compute_diff(contract_cols, actual_cols)
 
     payload = {

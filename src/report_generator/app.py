@@ -24,8 +24,19 @@ def _write_text(bucket: str, key: str, text: str, content_type: str = "text/plai
 
 def _list_recent_reports(bucket: str, prefix: str, limit: int = 10) -> List[str]:
     try:
-        resp = s3.list_objects_v2(Bucket=bucket, Prefix=prefix)
-        objs = resp.get("Contents", []) or []
+        objs: List[Dict[str, Any]] = []
+        token: str = ""
+        while True:
+            params = {"Bucket": bucket, "Prefix": prefix}
+            if token:
+                params["ContinuationToken"] = token
+            resp = s3.list_objects_v2(**params)
+            objs.extend(resp.get("Contents", []) or [])
+            if not resp.get("IsTruncated"):
+                break
+            token = resp.get("NextContinuationToken", "")
+            if not token:
+                break
         objs.sort(key=lambda o: o.get("LastModified"), reverse=True)
         keys = [o["Key"] for o in objs if o.get("Key", "").endswith(".report.html")]
         return keys[:limit]

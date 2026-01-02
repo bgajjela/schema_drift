@@ -14,6 +14,9 @@ Deterministic schema-drift monitor that compares contract schemas (JSON in S3) a
 - [Upload contracts and registry](#upload-contracts-and-registry)
 - [Run on-demand](#run-on-demand)
 - [Outputs](#outputs)
+- [Sample reports](#sample-reports)
+- [Sample data sources](#sample-data-sources)
+- [Limitations](#limitations)
 - [Requirements](#requirements)
 - [IAM and permissions](#iam-and-permissions)
 - [Developer workflow](#developer-workflow)
@@ -117,6 +120,28 @@ cat /tmp/schema_out.json
 - Reports: `reports/<db>.<table>/*.report.html` and `reports/<db>.<table>/latest.html`
 - Index: `index.html`
 
+## Sample reports
+
+Static HTML examples for documentation:
+
+- [Parks sample report](sample_screenshots/parks.html)
+- [CPS schools sample report](sample_screenshots/cps_schools.html)
+
+## Sample data sources
+
+The files in `sample_data/` are derived from public datasets on the City of Chicago Data Portal:
+
+- Parks data: https://data.cityofchicago.org/d/ejsh-fztr
+- Schools data: https://data.cityofchicago.org/d/twrw-chuq
+
+If you plan to publish this repo, confirm the applicable data licenses or replace these files with synthetic samples.
+
+## Limitations
+
+- Drift is detected when the Glue schema changes or differs from the contract.
+- If upstream data changes but Glue is not updated (no crawler or schema update), the monitor will not detect it.
+- This is an expected constraint of a metadata-first approach, not a data-quality validation.
+
 ## Requirements
 
 Functional:
@@ -136,6 +161,8 @@ Non-functional:
 See `docs/IAM_PREREQS.md` for required AWS services, deployment permissions, and bucket policy guidance.
 
 ## Developer workflow
+
+Make targets are optional helpers; the AWS CLI instructions above are the source of truth.
 
 ```bash
 make build
