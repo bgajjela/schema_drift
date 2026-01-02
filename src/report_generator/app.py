@@ -3,7 +3,6 @@
 # pylint: disable=import-error
 
 import html
-import json
 import logging
 import os
 from datetime import datetime, timezone
@@ -12,16 +11,11 @@ from typing import Any, Dict, List
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 
+from shared.s3_utils import read_json
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 s3 = boto3.client("s3")
-
-
-def _read_json(bucket: str, key: str) -> Dict[str, Any]:
-    """Read a JSON object from S3."""
-    obj = s3.get_object(Bucket=bucket, Key=key)
-    return json.loads(obj["Body"].read().decode("utf-8"))
 
 
 def _write_text(
@@ -303,60 +297,66 @@ def _md_from_payload(payload: Dict[str, Any]) -> str:
         return _md_error(ctx)
     return _md_drift(ctx)
 
-
-def lambda_handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
-    """Lambda entry point for generating reports."""
-    report_bucket = os.environ["REPORT_BUCKET"]
-
+def _diff_location(event: Dict[str, Any], default_bucket: str) -> Dict[str, str]:
+    """Extract diff S3 location from the event."""
     diff_info = event.get("diff_s3", {})
-    diff_bucket = diff_info.get("bucket", report_bucket)
-    diff_key = diff_info.get("key")
-    if not diff_key:
-        return {
-            "statusCode": 400,
-            "message": "Missing event.diff_s3.key (diff file to analyze).",
-        }
+    return {
+        "bucket": diff_info.get("bucket", default_bucket),
+        "key": diff_info.get("key", ""),
+    }
 
-    payload = _read_json(diff_bucket, diff_key)
 
-    md = _md_from_payload(payload)
-
+def _report_keys(payload: Dict[str, Any], diff_key: str) -> Dict[str, str]:
+    """Build report output keys based on payload and diff key."""
     table = payload.get("table", {})
     db_name = table.get("database", "unknown")
     table_name = table.get("name", "unknown")
     safe_table = f"{db_name}.{table_name}".replace("/", "_")
     run_id = diff_key.split("/")[-1].replace(".diff.json", "")
+    return {
+        "safe_table": safe_table,
+        "report_md_key": f"reports/{safe_table}/{run_id}.report.md",
+        "report_html_key": f"reports/{safe_table}/{run_id}.report.html",
+        "latest_key": f"reports/{safe_table}/latest.html",
+        "prefix": f"reports/{safe_table}/",
+    }
 
-    report_md_key = f"reports/{safe_table}/{run_id}.report.md"
-    report_html_key = f"reports/{safe_table}/{run_id}.report.html"
-    latest_key = f"reports/{safe_table}/latest.html"
 
+def _write_report_artifacts(
+    report_bucket: str,
+    keys: Dict[str, str],
+    markdown: str,
+) -> None:
+    """Write report markdown/html plus index to S3."""
     _write_text(
         report_bucket,
-        report_md_key,
-        md,
+        keys["report_md_key"],
+        markdown,
         content_type="text/markdown; charset=utf-8",
     )
     html_doc = _render_report_html(
-        title=f"{safe_table} drift report",
-        markdown=md,
-        latest_key=latest_key,
+        title=f"{keys['safe_table']} drift report",
+        markdown=markdown,
+        latest_key=keys["latest_key"],
     )
     _write_text(
         report_bucket,
-        report_html_key,
+        keys["report_html_key"],
         html_doc,
         content_type="text/html; charset=utf-8",
     )
     _write_text(
         report_bucket,
-        latest_key,
+        keys["latest_key"],
         html_doc,
         content_type="text/html; charset=utf-8",
     )
 
-    recent = _list_recent_reports(report_bucket, prefix=f"reports/{safe_table}/")
-    index_html = _render_index_html(latest_href=latest_key, recent_items=recent)
+    recent = _list_recent_reports(report_bucket, prefix=keys["prefix"])
+    index_html = _render_index_html(
+        latest_href=keys["latest_key"],
+        recent_items=recent,
+    )
     _write_text(
         report_bucket,
         "index.html",
@@ -364,8 +364,27 @@ def lambda_handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
         content_type="text/html; charset=utf-8",
     )
 
+
+def lambda_handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
+    """Lambda entry point for generating reports."""
+    report_bucket = os.environ["REPORT_BUCKET"]
+
+    diff_loc = _diff_location(event, report_bucket)
+    diff_bucket = diff_loc["bucket"]
+    diff_key = diff_loc["key"]
+    if not diff_key:
+        return {
+            "statusCode": 400,
+            "message": "Missing event.diff_s3.key (diff file to analyze).",
+        }
+
+    payload = read_json(diff_bucket, diff_key)
+    md = _md_from_payload(payload)
+    keys = _report_keys(payload, diff_key)
+    _write_report_artifacts(report_bucket, keys, md)
+
     return {
         "statusCode": 200,
-        "report_s3": {"bucket": report_bucket, "key": report_md_key},
-        "latest_html": {"bucket": report_bucket, "key": latest_key},
+        "report_s3": {"bucket": report_bucket, "key": keys["report_md_key"]},
+        "latest_html": {"bucket": report_bucket, "key": keys["latest_key"]},
     }

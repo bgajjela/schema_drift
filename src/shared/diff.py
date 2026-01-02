@@ -86,6 +86,81 @@ def columns_by_name(cols: List[Dict[str, Any]]) -> Dict[str, Column]:
     return out
 
 
+def _remove_column_change(contract_col: Column) -> Dict[str, Any]:
+    """Return a change record for a removed column."""
+    return {
+        "kind": "REMOVE_COLUMN",
+        "column": contract_col.name,
+        "before": {"type": contract_col.type, "nullable": contract_col.nullable},
+        "after": None,
+        "severity": "BREAKING",
+        "rationale": "Column present in contract but missing in actual schema.",
+    }
+
+
+def _type_change_record(
+    contract_col: Column, actual_col: Column
+) -> Optional[Dict[str, Any]]:
+    """Return a change record for a type change, if any."""
+    contract_type = (contract_col.type or "").strip().lower()
+    actual_type = (actual_col.type or "").strip().lower()
+    if contract_type == actual_type:
+        return None
+    severity, rationale = type_change_severity(contract_col.type, actual_col.type)
+    return {
+        "kind": "TYPE_CHANGE",
+        "column": contract_col.name,
+        "before": {"type": contract_col.type, "nullable": contract_col.nullable},
+        "after": {"type": actual_col.type, "nullable": actual_col.nullable},
+        "severity": severity,
+        "rationale": rationale,
+    }
+
+
+def _nullability_change_record(
+    contract_col: Column, actual_col: Column
+) -> Optional[Dict[str, Any]]:
+    """Return a change record for nullability changes, if any."""
+    if contract_col.nullable is None or actual_col.nullable is None:
+        return None
+    if contract_col.nullable == actual_col.nullable:
+        return None
+    if contract_col.nullable and (actual_col.nullable is False):
+        return {
+            "kind": "NULLABILITY_CHANGE",
+            "column": contract_col.name,
+            "before": {"nullable": contract_col.nullable},
+            "after": {"nullable": actual_col.nullable},
+            "severity": "BREAKING",
+            "rationale": "Column became non-nullable.",
+        }
+    return {
+        "kind": "NULLABILITY_CHANGE",
+        "column": contract_col.name,
+        "before": {"nullable": contract_col.nullable},
+        "after": {"nullable": actual_col.nullable},
+        "severity": "RISKY",
+        "rationale": "Nullability changed.",
+    }
+
+
+def _add_column_change(actual_col: Column) -> Dict[str, Any]:
+    """Return a change record for an added column."""
+    is_nullable = actual_col.nullable is True or actual_col.nullable is None
+    severity = "SAFE" if is_nullable else "RISKY"
+    rationale = "New column added (nullable/unknown)."
+    if actual_col.nullable is False:
+        rationale = "New non-nullable column added."
+    return {
+        "kind": "ADD_COLUMN",
+        "column": actual_col.name,
+        "before": None,
+        "after": {"type": actual_col.type, "nullable": actual_col.nullable},
+        "severity": severity,
+        "rationale": rationale,
+    }
+
+
 def compute_diff(
     contract_cols: List[Dict[str, Any]],
     actual_cols: List[Dict[str, Any]],
@@ -97,95 +172,22 @@ def compute_diff(
     changes: List[Dict[str, Any]] = []
 
     for name_lc, contract_col in contract_map.items():
-        if name_lc not in actual_map:
-            changes.append(
-                {
-                    "kind": "REMOVE_COLUMN",
-                    "column": contract_col.name,
-                    "before": {
-                        "type": contract_col.type,
-                        "nullable": contract_col.nullable,
-                    },
-                    "after": None,
-                    "severity": "BREAKING",
-                    "rationale": (
-                        "Column present in contract but missing in actual schema."
-                    ),
-                }
-            )
+        actual_col = actual_map.get(name_lc)
+        if actual_col is None:
+            changes.append(_remove_column_change(contract_col))
             continue
 
-        actual_col = actual_map[name_lc]
-        contract_type = (contract_col.type or "").strip().lower()
-        actual_type = (actual_col.type or "").strip().lower()
+        type_change = _type_change_record(contract_col, actual_col)
+        if type_change:
+            changes.append(type_change)
 
-        if contract_type != actual_type:
-            severity, rationale = type_change_severity(
-                contract_col.type, actual_col.type
-            )
-            changes.append(
-                {
-                    "kind": "TYPE_CHANGE",
-                    "column": contract_col.name,
-                    "before": {
-                        "type": contract_col.type,
-                        "nullable": contract_col.nullable,
-                    },
-                    "after": {
-                        "type": actual_col.type,
-                        "nullable": actual_col.nullable,
-                    },
-                    "severity": severity,
-                    "rationale": rationale,
-                }
-            )
-
-        nullable_changed = (
-            contract_col.nullable is not None
-            and actual_col.nullable is not None
-            and contract_col.nullable != actual_col.nullable
-        )
-        if nullable_changed:
-            if contract_col.nullable and (actual_col.nullable is False):
-                changes.append(
-                    {
-                        "kind": "NULLABILITY_CHANGE",
-                        "column": contract_col.name,
-                        "before": {"nullable": contract_col.nullable},
-                        "after": {"nullable": actual_col.nullable},
-                        "severity": "BREAKING",
-                        "rationale": "Column became non-nullable.",
-                    }
-                )
-            else:
-                changes.append(
-                    {
-                        "kind": "NULLABILITY_CHANGE",
-                        "column": contract_col.name,
-                        "before": {"nullable": contract_col.nullable},
-                        "after": {"nullable": actual_col.nullable},
-                        "severity": "RISKY",
-                        "rationale": "Nullability changed.",
-                    }
-                )
+        nullability_change = _nullability_change_record(contract_col, actual_col)
+        if nullability_change:
+            changes.append(nullability_change)
 
     for name_lc, actual_col in actual_map.items():
         if name_lc not in contract_map:
-            is_nullable = actual_col.nullable is True or actual_col.nullable is None
-            severity = "SAFE" if is_nullable else "RISKY"
-            rationale = "New column added (nullable/unknown)."
-            if actual_col.nullable is False:
-                rationale = "New non-nullable column added."
-            changes.append(
-                {
-                    "kind": "ADD_COLUMN",
-                    "column": actual_col.name,
-                    "before": None,
-                    "after": {"type": actual_col.type, "nullable": actual_col.nullable},
-                    "severity": severity,
-                    "rationale": rationale,
-                }
-            )
+            changes.append(_add_column_change(actual_col))
 
     counts = {"SAFE": 0, "RISKY": 0, "BREAKING": 0}
     for change in changes:

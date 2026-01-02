@@ -13,18 +13,13 @@ import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 
 from shared.diff import compute_diff
+from shared.s3_utils import read_json
 
 s3 = boto3.client("s3")
 glue = boto3.client("glue")
 lambda_client = boto3.client("lambda")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-def _read_json_s3(bucket: str, key: str) -> Dict[str, Any]:
-    """Read a JSON document from S3."""
-    obj = s3.get_object(Bucket=bucket, Key=key)
-    return json.loads(obj["Body"].read().decode("utf-8"))
 
 
 def _write_json_s3(bucket: str, key: str, data: Dict[str, Any]) -> None:
@@ -236,29 +231,36 @@ def _error_payload(
     }
 
 
+def _resolve_config(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
+    """Resolve table config values with defaults."""
+    return {
+        "contract_bucket": cfg.get("contract_bucket") or defaults["contract_bucket"],
+        "contract_key": cfg.get("contract_key") or defaults["contract_key"],
+        "report_bucket": cfg.get("report_bucket") or defaults["report_bucket"],
+        "glue_database": cfg.get("glue_database") or defaults["glue_database"],
+        "glue_table": cfg.get("glue_table") or defaults["glue_table"],
+        "data_location": cfg.get("data_location") or defaults.get("data_location") or "",
+        "file_format": cfg.get("file_format") or defaults.get("file_format") or "csv",
+    }
+
+
 def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
     """Run drift detection for a single table config."""
-    contract_bucket = cfg.get("contract_bucket") or defaults["contract_bucket"]
-    contract_key = cfg.get("contract_key") or defaults["contract_key"]
-    report_bucket = cfg.get("report_bucket") or defaults["report_bucket"]
-
-    glue_db = cfg.get("glue_database") or defaults["glue_database"]
-    glue_table = cfg.get("glue_table") or defaults["glue_table"]
-
-    data_location = cfg.get("data_location") or defaults.get("data_location") or ""
-    file_format = cfg.get("file_format") or defaults.get("file_format") or "csv"
-
+    ctx = _resolve_config(cfg, defaults)
+    glue_db = ctx["glue_database"]
+    glue_table = ctx["glue_table"]
+    data_location = ctx["data_location"]
     refs = {
-        "contract_bucket": contract_bucket,
-        "contract_key": contract_key,
-        "report_bucket": report_bucket,
+        "contract_bucket": ctx["contract_bucket"],
+        "contract_key": ctx["contract_key"],
+        "report_bucket": ctx["report_bucket"],
         "data_location": data_location,
     }
     table_ref = f"{glue_db}.{glue_table}"
 
     # Try to read contract; on failure write an ERROR payload to S3.
     try:
-        contract_doc = _read_json_s3(contract_bucket, contract_key)
+        contract_doc = read_json(ctx["contract_bucket"], ctx["contract_key"])
     except (ClientError, BotoCoreError, json.JSONDecodeError) as exc:
         payload = _error_payload(
             glue_db,
@@ -266,11 +268,11 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
             refs,
             f"{type(exc).__name__}: {exc}",
         )
-        diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+        diff_key = _write_diff(ctx["report_bucket"], glue_db, glue_table, payload)
         return {
             "table": table_ref,
             "status": "ERROR",
-            "diff_s3": {"bucket": report_bucket, "key": diff_key},
+            "diff_s3": {"bucket": ctx["report_bucket"], "key": diff_key},
         }
 
     # Guardrail: if DataLocation is configured but has no objects, skip drift.
@@ -278,11 +280,11 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
         try:
             if not _s3_prefix_has_any_objects(data_location):
                 payload = _no_data_payload(glue_db, glue_table, contract_doc, refs)
-                diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+                diff_key = _write_diff(ctx["report_bucket"], glue_db, glue_table, payload)
                 return {
                     "table": table_ref,
                     "status": "NO_DATA",
-                    "diff_s3": {"bucket": report_bucket, "key": diff_key},
+                    "diff_s3": {"bucket": ctx["report_bucket"], "key": diff_key},
                 }
         except (ClientError, BotoCoreError, ValueError) as exc:
             payload = _error_payload(
@@ -291,16 +293,22 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
                 refs,
                 f"{type(exc).__name__}: {exc}",
             )
-            diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+            diff_key = _write_diff(ctx["report_bucket"], glue_db, glue_table, payload)
             return {
                 "table": table_ref,
                 "status": "ERROR",
-                "diff_s3": {"bucket": report_bucket, "key": diff_key},
+                "diff_s3": {"bucket": ctx["report_bucket"], "key": diff_key},
             }
 
     # Ensure Glue metadata exists if DataLocation provided; otherwise assume it exists.
     if data_location:
-        _ensure_glue_table(glue_db, glue_table, data_location, file_format, contract_doc)
+        _ensure_glue_table(
+            glue_db,
+            glue_table,
+            data_location,
+            ctx["file_format"],
+            contract_doc,
+        )
 
     try:
         actual_cols = _load_glue_schema(glue_db, glue_table)
@@ -311,11 +319,11 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
             refs,
             f"{type(exc).__name__}: {exc}",
         )
-        diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+        diff_key = _write_diff(ctx["report_bucket"], glue_db, glue_table, payload)
         return {
             "table": table_ref,
             "status": "ERROR",
-            "diff_s3": {"bucket": report_bucket, "key": diff_key},
+            "diff_s3": {"bucket": ctx["report_bucket"], "key": diff_key},
         }
 
     diff_doc = compute_diff(contract_doc.get("columns", []), actual_cols)
@@ -326,26 +334,26 @@ def _run_one(cfg: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
         "table": {"database": glue_db, "name": glue_table},
         "contract_version": contract_doc.get("contract_version"),
         "diff": diff_doc,
-        "contract_key": contract_key,
-        "contract_bucket": contract_bucket,
-        "report_bucket": report_bucket,
+        "contract_key": ctx["contract_key"],
+        "contract_bucket": ctx["contract_bucket"],
+        "report_bucket": ctx["report_bucket"],
         "data_location": data_location,
         "actual_source": "glue",
     }
 
-    diff_key = _write_diff(report_bucket, glue_db, glue_table, payload)
+    diff_key = _write_diff(ctx["report_bucket"], glue_db, glue_table, payload)
     return {
         "table": table_ref,
         "status": "OK",
         "overall_severity": diff_doc.get("overall_severity"),
-        "diff_s3": {"bucket": report_bucket, "key": diff_key},
+        "diff_s3": {"bucket": ctx["report_bucket"], "key": diff_key},
         "counts": diff_doc.get("counts", {}),
     }
 
 
 def _load_registry(bucket: str, key: str) -> List[Dict[str, Any]]:
     """Load registry list from S3."""
-    reg = _read_json_s3(bucket, key)
+    reg = read_json(bucket, key)
     if isinstance(reg, dict) and "tables" in reg and isinstance(reg["tables"], list):
         return reg["tables"]
     if isinstance(reg, list):
