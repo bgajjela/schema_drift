@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Schema Drift Monitor PoC (contracts + Glue metadata + deterministic HTML reports)
+
+Parameters:
+  ContractBucket:
+    Type: String
+    Description: S3 bucket containing schema contracts (and optional registry config).
+  ReportBucket:
+    Type: String
+    Description: S3 bucket to write diffs and reports.
+
+  # Defaults used for single-table mode AND as defaults for registry entries
+  DefaultContractKey:
+    Type: String
+    Default: contracts/chicago_public/cpd_parks/v1_2_1.json
+    Description: Default contract key (used if registry entries omit contract_key).
+  DefaultGlueDatabase:
+    Type: String
+    Default: chicago_public
+  DefaultGlueTable:
+    Type: String
+    Default: cpd_parks
+  DefaultDataLocation:
+    Type: String
+    Default: s3://YOUR_BUCKET/data/cpd_parks/
+    Description: Default S3 prefix for data (used if registry entries omit data_location).
+  DefaultFileFormat:
+    Type: String
+    Default: csv
+    AllowedValues: [csv, parquet]
+
+  # Registry mode (Pattern A): if RegistryBucket+RegistryKey are set, the function loops all entries.
+  RegistryBucket:
+    Type: String
+    Default: ''
+    Description: S3 bucket containing configs/tables.json (optional).
+  RegistryKey:
+    Type: String
+    Default: ''
+    Description: S3 key for configs/tables.json (optional).
+  MaxTablesPerRun:
+    Type: Number
+    Default: 50
+    Description: Maximum tables processed per scheduled run.
+
+  ScheduleExpression:
+    Type: String
+    Default: rate(1 day)
+    Description: EventBridge schedule for running drift checks.
+
+Globals:
+  Function:
+    Runtime: python3.11
+    Timeout: 180
+    MemorySize: 256
+    Tracing: Active
+    Environment:
+      Variables:
+        CONTRACT_BUCKET: !Ref ContractBucket
+        REPORT_BUCKET: !Ref ReportBucket
+        DEFAULT_CONTRACT_KEY: !Ref DefaultContractKey
+        DEFAULT_GLUE_DATABASE: !Ref DefaultGlueDatabase
+        DEFAULT_GLUE_TABLE: !Ref DefaultGlueTable
+        DEFAULT_DATA_LOCATION: !Ref DefaultDataLocation
+        DEFAULT_FILE_FORMAT: !Ref DefaultFileFormat
+        REGISTRY_BUCKET: !Ref RegistryBucket
+        REGISTRY_KEY: !Ref RegistryKey
+        MAX_TABLES_PER_RUN: !Ref MaxTablesPerRun
+
+Resources:
+  ReportGeneratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: report_generator.app.lambda_handler
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref ReportBucket
+
+  SchemaDiffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: schema_diff.app.lambda_handler
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref ContractBucket
+        - S3ReadPolicy:
+            BucketName: !Ref ReportBucket
+        - S3CrudPolicy:
+            BucketName: !Ref ReportBucket
+        - Statement:
+            - Effect: Allow
+              Action:
+                - glue:GetDatabase
+                - glue:CreateDatabase
+                - glue:GetTable
+                - glue:CreateTable
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: !GetAtt ReportGeneratorFunction.Arn
+      Environment:
+        Variables:
+          REPORT_GENERATOR_FUNCTION_NAME: !Ref ReportGeneratorFunction
+      Events:
+        ScheduledRun:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref ScheduleExpression
+            Enabled: true
+
+Outputs:
+  SchemaDiffFunctionArn:
+    Value: !GetAtt SchemaDiffFunction.Arn
+  ReportGeneratorFunctionArn:
+    Value: !GetAtt ReportGeneratorFunction.Arn

@@ -1,0 +1,612 @@
+{
+  "contract_version": "1.2.1",
+  "dataset": {
+    "name": "CPD_Parks",
+    "id": "ejsh-fztr",
+    "description": "Current boundaries of Chicago Park District properties as of November 4, 2016.",
+    "attribution": "Chicago Park District",
+    "attribution_link": "https://www.chicagoparkdistrict.com/parks-facilities",
+    "category": "Parks & Recreation",
+    "source": "Chicago Data Portal (Socrata)",
+    "source_about_data": "https://data.cityofchicago.org/Parks-Recreation/CPD_Parks/ejsh-fztr/about_data",
+    "data_last_modified_epoch": 1724877926,
+    "rows_updated_at_epoch": 1652888389
+  },
+  "table": {
+    "database": "chicago_public",
+    "name": "cpd_parks",
+    "grain": "one row per park district property (geometry boundary)."
+  },
+  "columns": [
+    {
+      "name": "the_geom",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "the_geom",
+      "description": "",
+      "semantic_type": "geo_multipolygon",
+      "format": "geojson"
+    },
+    {
+      "name": "objectid_1",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "OBJECTID_1",
+      "description": ""
+    },
+    {
+      "name": "park_no",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "PARK_NO",
+      "description": ""
+    },
+    {
+      "name": "park",
+      "type": "string",
+      "nullable": false,
+      "source_display_name": "PARK",
+      "description": ""
+    },
+    {
+      "name": "location",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "LOCATION",
+      "description": ""
+    },
+    {
+      "name": "zip",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "ZIP",
+      "description": ""
+    },
+    {
+      "name": "acres",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ACRES",
+      "description": ""
+    },
+    {
+      "name": "ward",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "WARD",
+      "description": ""
+    },
+    {
+      "name": "park_class",
+      "type": "string",
+      "nullable": false,
+      "source_display_name": "PARK_CLASS",
+      "description": ""
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "nullable": false,
+      "source_display_name": "LABEL",
+      "description": ""
+    },
+    {
+      "name": "gisobjid",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GISOBJID",
+      "description": ""
+    },
+    {
+      "name": "wheelchr_a",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "WHEELCHR_A",
+      "description": ""
+    },
+    {
+      "name": "archery_ra",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ARCHERY_RA",
+      "description": ""
+    },
+    {
+      "name": "artificial",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ARTIFICIAL",
+      "description": ""
+    },
+    {
+      "name": "band_shell",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BAND_SHELL",
+      "description": ""
+    },
+    {
+      "name": "baseball_b",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BASEBALL_B",
+      "description": ""
+    },
+    {
+      "name": "basketball",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BASKETBALL",
+      "description": ""
+    },
+    {
+      "name": "basketba_1",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BASKETBA_1",
+      "description": ""
+    },
+    {
+      "name": "beach",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BEACH",
+      "description": ""
+    },
+    {
+      "name": "boat_launc",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOAT_LAUNC",
+      "description": ""
+    },
+    {
+      "name": "boat_lau_1",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOAT_LAU_1",
+      "description": ""
+    },
+    {
+      "name": "boat_slips",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOAT_SLIPS",
+      "description": ""
+    },
+    {
+      "name": "bocce_cour",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOCCE_COUR",
+      "description": ""
+    },
+    {
+      "name": "bowling_gr",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOWLING_GR",
+      "description": ""
+    },
+    {
+      "name": "casting_pi",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CASTING_PI",
+      "description": ""
+    },
+    {
+      "name": "football_s",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "FOOTBALL_S",
+      "description": ""
+    },
+    {
+      "name": "community_",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "COMMUNITY_",
+      "description": ""
+    },
+    {
+      "name": "conservato",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CONSERVATO",
+      "description": ""
+    },
+    {
+      "name": "cultural_c",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CULTURAL_C",
+      "description": ""
+    },
+    {
+      "name": "dog_friend",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "DOG_FRIEND",
+      "description": ""
+    },
+    {
+      "name": "fitness_ce",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "FITNESS_CE",
+      "description": ""
+    },
+    {
+      "name": "fitness_co",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "FITNESS_CO",
+      "description": ""
+    },
+    {
+      "name": "gallery",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GALLERY",
+      "description": ""
+    },
+    {
+      "name": "garden",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GARDEN",
+      "description": ""
+    },
+    {
+      "name": "golf_cours",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GOLF_COURS",
+      "description": ""
+    },
+    {
+      "name": "golf_drivi",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GOLF_DRIVI",
+      "description": ""
+    },
+    {
+      "name": "golf_putti",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GOLF_PUTTI",
+      "description": ""
+    },
+    {
+      "name": "gymnasium",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GYMNASIUM",
+      "description": ""
+    },
+    {
+      "name": "gymnastic_",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GYMNASTIC_",
+      "description": ""
+    },
+    {
+      "name": "handball_r",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "HANDBALL_R",
+      "description": ""
+    },
+    {
+      "name": "horseshoe_",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "HORSESHOE_",
+      "description": ""
+    },
+    {
+      "name": "iceskating",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ICESKATING",
+      "description": ""
+    },
+    {
+      "name": "pool_indoo",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "POOL_INDOO",
+      "description": ""
+    },
+    {
+      "name": "baseball_j",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BASEBALL_J",
+      "description": ""
+    },
+    {
+      "name": "mountain_b",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "MOUNTAIN_B",
+      "description": ""
+    },
+    {
+      "name": "nature_cen",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "NATURE_CEN",
+      "description": ""
+    },
+    {
+      "name": "pool_outdo",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "POOL_OUTDO",
+      "description": ""
+    },
+    {
+      "name": "zoo",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ZOO",
+      "description": ""
+    },
+    {
+      "name": "playground",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "PLAYGROUND",
+      "description": ""
+    },
+    {
+      "name": "playgrou_1",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "PLAYGROU_1",
+      "description": ""
+    },
+    {
+      "name": "rowing_clu",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "ROWING_CLU",
+      "description": ""
+    },
+    {
+      "name": "volleyball",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "VOLLEYBALL",
+      "description": ""
+    },
+    {
+      "name": "senior_cen",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SENIOR_CEN",
+      "description": ""
+    },
+    {
+      "name": "shuffleboa",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SHUFFLEBOA",
+      "description": ""
+    },
+    {
+      "name": "skate_park",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SKATE_PARK",
+      "description": ""
+    },
+    {
+      "name": "sled_hill",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SLED_HILL",
+      "description": ""
+    },
+    {
+      "name": "sport_roll",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SPORT_ROLL",
+      "description": ""
+    },
+    {
+      "name": "spray_feat",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "SPRAY_FEAT",
+      "description": ""
+    },
+    {
+      "name": "baseball_s",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BASEBALL_S",
+      "description": ""
+    },
+    {
+      "name": "tennis_cou",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "TENNIS_COU",
+      "description": ""
+    },
+    {
+      "name": "track",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "TRACK",
+      "description": ""
+    },
+    {
+      "name": "volleyba_1",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "VOLLEYBA_1",
+      "description": ""
+    },
+    {
+      "name": "water_play",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "WATER_PLAY",
+      "description": ""
+    },
+    {
+      "name": "water_slid",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "WATER_SLID",
+      "description": ""
+    },
+    {
+      "name": "boxing_cen",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "BOXING_CEN",
+      "description": ""
+    },
+    {
+      "name": "wetland_ar",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "WETLAND_AR",
+      "description": ""
+    },
+    {
+      "name": "lagoon",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "LAGOON",
+      "description": ""
+    },
+    {
+      "name": "cricket_fi",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CRICKET_FI",
+      "description": ""
+    },
+    {
+      "name": "climbing_w",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CLIMBING_W",
+      "description": ""
+    },
+    {
+      "name": "game_table",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "GAME_TABLE",
+      "description": ""
+    },
+    {
+      "name": "carousel",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CAROUSEL",
+      "description": ""
+    },
+    {
+      "name": "croquet",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "CROQUET",
+      "description": ""
+    },
+    {
+      "name": "handball_i",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "HANDBALL_I",
+      "description": ""
+    },
+    {
+      "name": "harbor",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "HARBOR",
+      "description": ""
+    },
+    {
+      "name": "modeltrain",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "MODELTRAIN",
+      "description": ""
+    },
+    {
+      "name": "modelyacht",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "MODELYACHT",
+      "description": ""
+    },
+    {
+      "name": "nature_bir",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "NATURE_BIR",
+      "description": ""
+    },
+    {
+      "name": "minigolf",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "MINIGOLF",
+      "description": ""
+    },
+    {
+      "name": "perimeter",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "PERIMETER",
+      "description": ""
+    },
+    {
+      "name": "shape_leng",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "Shape_Leng",
+      "description": ""
+    },
+    {
+      "name": "shape_area",
+      "type": "double",
+      "nullable": false,
+      "source_display_name": "Shape_Area",
+      "description": ""
+    }
+  ],
+  "rules": {
+    "primary_key": [
+      "park_no"
+    ],
+    "pii_columns": [],
+    "required_columns": [
+      "park_no",
+      "park",
+      "park_class",
+      "label"
+    ],
+    "notes": [
+      "Types and nullability derived from Socrata dataset metadata (api/views/ejsh-fztr).",
+      "zip is modeled as string (source type is text).",
+      "Many amenity columns are numeric flags/counts; they are modeled as double because Socrata 'number' is not strictly integer-typed."
+    ]
+  },
+  "owner": {
+    "team": "personal-project",
+    "contact": "you@example.com"
+  }
+}

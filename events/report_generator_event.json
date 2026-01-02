@@ -1,0 +1,6 @@
+{
+  "diff_s3": {
+    "bucket": "YOUR_BUCKET",
+    "key": "diffs/chicago_public.cpd_parks/REPLACE_ME.diff.json"
+  }
+}

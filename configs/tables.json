@@ -1,0 +1,22 @@
+{
+  "tables": [
+    {
+      "glue_database": "chicago_public",
+      "glue_table": "cpd_parks",
+      "contract_key": "contracts/chicago_public/cpd_parks/v1_2_1.json",
+      "data_location": "s3://YOUR_BUCKET/data/cpd_parks/",
+      "file_format": "csv",
+      "contract_bucket": "YOUR_BUCKET",
+      "report_bucket": "YOUR_BUCKET"
+    },
+    {
+      "glue_database": "chicago_public",
+      "glue_table": "cps_schools",
+      "contract_key": "contracts/chicago_public/cps_schools/v1_0_0.json",
+      "data_location": "s3://YOUR_BUCKET/data/cps_schools/",
+      "file_format": "csv",
+      "contract_bucket": "YOUR_BUCKET",
+      "report_bucket": "YOUR_BUCKET"
+    }
+  ]
+}

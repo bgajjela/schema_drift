@@ -1,0 +1,704 @@
+{
+  "contract_version": "1.0.0",
+  "dataset": {
+    "name": "Chicago Public Schools - School Profiles (Socrata export)",
+    "source": "Chicago Data Portal",
+    "notes": "PoC contract generated from CSV header; all columns typed as string for Glue compatibility."
+  },
+  "table": {
+    "database": "chicago_public",
+    "name": "cps_schools"
+  },
+  "columns": [
+    {
+      "name": "address",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "address",
+      "description": ""
+    },
+    {
+      "name": "average_length_suspension",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "average_length_suspension",
+      "description": ""
+    },
+    {
+      "name": "average_length_suspension_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "average_length_suspension_1",
+      "description": ""
+    },
+    {
+      "name": "average_length_suspension_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "average_length_suspension_2",
+      "description": ""
+    },
+    {
+      "name": "behavior_discipline_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "behavior_discipline_year",
+      "description": ""
+    },
+    {
+      "name": "behavior_discipline_year_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "behavior_discipline_year_1",
+      "description": ""
+    },
+    {
+      "name": "blue_ribbon_award_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "blue_ribbon_award_year",
+      "description": ""
+    },
+    {
+      "name": "chronic_truancy_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "chronic_truancy_pct",
+      "description": ""
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "city",
+      "description": ""
+    },
+    {
+      "name": "college_enrollment_cps_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_enrollment_cps_pct",
+      "description": ""
+    },
+    {
+      "name": "college_enrollment_cps_pct_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_enrollment_cps_pct_1",
+      "description": ""
+    },
+    {
+      "name": "college_enrollment_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_enrollment_school",
+      "description": ""
+    },
+    {
+      "name": "college_enrollment_school_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_enrollment_school_1",
+      "description": ""
+    },
+    {
+      "name": "college_persistence_cps_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_persistence_cps_pct",
+      "description": ""
+    },
+    {
+      "name": "college_persistence_cps_pct_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_persistence_cps_pct_1",
+      "description": ""
+    },
+    {
+      "name": "college_persistence_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_persistence_school",
+      "description": ""
+    },
+    {
+      "name": "college_persistence_school_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "college_persistence_school_1",
+      "description": ""
+    },
+    {
+      "name": "cps_school_profile",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "cps_school_profile",
+      "description": ""
+    },
+    {
+      "name": "creative_school_certification",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "creative_school_certification",
+      "description": ""
+    },
+    {
+      "name": "creative_school_certification_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "creative_school_certification_1",
+      "description": ""
+    },
+    {
+      "name": "culture_climate_description",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "culture_climate_description",
+      "description": ""
+    },
+    {
+      "name": "culture_climate_rating",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "culture_climate_rating",
+      "description": ""
+    },
+    {
+      "name": "empty_progress_report_message",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "empty_progress_report_message",
+      "description": ""
+    },
+    {
+      "name": "excelerate_award_gold_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "excelerate_award_gold_year",
+      "description": ""
+    },
+    {
+      "name": "excellence_award_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "excellence_award_year",
+      "description": ""
+    },
+    {
+      "name": "fax",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "fax",
+      "description": ""
+    },
+    {
+      "name": "freshmen_on_track_cps_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "freshmen_on_track_cps_pct",
+      "description": ""
+    },
+    {
+      "name": "freshmen_on_track_cps_pct_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "freshmen_on_track_cps_pct_1",
+      "description": ""
+    },
+    {
+      "name": "freshmen_on_track_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "freshmen_on_track_school",
+      "description": ""
+    },
+    {
+      "name": "freshmen_on_track_school_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "freshmen_on_track_school_1",
+      "description": ""
+    },
+    {
+      "name": "graduation_4_year_cps_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_4_year_cps_pct",
+      "description": ""
+    },
+    {
+      "name": "graduation_4_year_cps_pct_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_4_year_cps_pct_1",
+      "description": ""
+    },
+    {
+      "name": "graduation_4_year_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_4_year_school",
+      "description": ""
+    },
+    {
+      "name": "graduation_4_year_school_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_4_year_school_1",
+      "description": ""
+    },
+    {
+      "name": "graduation_5_year_cps_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_5_year_cps_pct",
+      "description": ""
+    },
+    {
+      "name": "graduation_5_year_cps_pct_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_5_year_cps_pct_1",
+      "description": ""
+    },
+    {
+      "name": "graduation_5_year_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_5_year_school",
+      "description": ""
+    },
+    {
+      "name": "graduation_5_year_school_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "graduation_5_year_school_1",
+      "description": ""
+    },
+    {
+      "name": "healthy_school_certification",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "healthy_school_certification",
+      "description": ""
+    },
+    {
+      "name": "healthy_school_certification_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "healthy_school_certification_1",
+      "description": ""
+    },
+    {
+      "name": "improvement_award_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "improvement_award_year",
+      "description": ""
+    },
+    {
+      "name": "location",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "location",
+      "description": "",
+      "semantic_type": "geo_point",
+      "format": "geojson"
+    },
+    {
+      "name": "long_name",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "long_name",
+      "description": ""
+    },
+    {
+      "name": "misconducts_to_suspensions",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "misconducts_to_suspensions",
+      "description": ""
+    },
+    {
+      "name": "misconducts_to_suspensions_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "misconducts_to_suspensions_1",
+      "description": ""
+    },
+    {
+      "name": "misconducts_to_suspensions_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "misconducts_to_suspensions_2",
+      "description": ""
+    },
+    {
+      "name": "mobility_rate_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "mobility_rate_pct",
+      "description": ""
+    },
+    {
+      "name": "one_year_dropout_rate_avg",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "one_year_dropout_rate_avg",
+      "description": ""
+    },
+    {
+      "name": "one_year_dropout_rate_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "one_year_dropout_rate_year",
+      "description": ""
+    },
+    {
+      "name": "one_year_dropout_rate_year_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "one_year_dropout_rate_year_1",
+      "description": ""
+    },
+    {
+      "name": "other_metrics_year_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "other_metrics_year_1",
+      "description": ""
+    },
+    {
+      "name": "other_metrics_year_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "other_metrics_year_2",
+      "description": ""
+    },
+    {
+      "name": "parent_survey_results_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "parent_survey_results_year",
+      "description": ""
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "phone",
+      "description": ""
+    },
+    {
+      "name": "primary_category",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "primary_category",
+      "description": ""
+    },
+    {
+      "name": "progress_report_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "progress_report_year",
+      "description": ""
+    },
+    {
+      "name": "progress_toward_graduation",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "progress_toward_graduation",
+      "description": ""
+    },
+    {
+      "name": "progress_toward_graduation_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "progress_toward_graduation_1",
+      "description": ""
+    },
+    {
+      "name": "sat_grade_11_score_cps_avg",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "sat_grade_11_score_cps_avg",
+      "description": ""
+    },
+    {
+      "name": "sat_grade_11_score_school",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "sat_grade_11_score_school",
+      "description": ""
+    },
+    {
+      "name": "school_id",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_id",
+      "description": ""
+    },
+    {
+      "name": "school_latitude",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_latitude",
+      "description": ""
+    },
+    {
+      "name": "school_longitude",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_longitude",
+      "description": ""
+    },
+    {
+      "name": "school_survey_ambitious",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_ambitious",
+      "description": ""
+    },
+    {
+      "name": "school_survey_collaborative",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_collaborative",
+      "description": ""
+    },
+    {
+      "name": "school_survey_effective",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_effective",
+      "description": ""
+    },
+    {
+      "name": "school_survey_involved",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_involved",
+      "description": ""
+    },
+    {
+      "name": "school_survey_safety",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_safety",
+      "description": ""
+    },
+    {
+      "name": "school_survey_student_response",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_student_response",
+      "description": ""
+    },
+    {
+      "name": "school_survey_student_response_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_student_response_1",
+      "description": ""
+    },
+    {
+      "name": "school_survey_supportive",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_supportive",
+      "description": ""
+    },
+    {
+      "name": "school_survey_teacher_response",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_teacher_response",
+      "description": ""
+    },
+    {
+      "name": "school_survey_teacher_response_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_survey_teacher_response_1",
+      "description": ""
+    },
+    {
+      "name": "school_type",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "school_type",
+      "description": ""
+    },
+    {
+      "name": "short_name",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "short_name",
+      "description": ""
+    },
+    {
+      "name": "spot_light_award_year",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "spot_light_award_year",
+      "description": ""
+    },
+    {
+      "name": "state",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "state",
+      "description": ""
+    },
+    {
+      "name": "state_school_report_card",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "state_school_report_card",
+      "description": ""
+    },
+    {
+      "name": "student_attainment_description",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_attainment_description",
+      "description": ""
+    },
+    {
+      "name": "student_attainment_rating",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_attainment_rating",
+      "description": ""
+    },
+    {
+      "name": "student_attendance_avg_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_attendance_avg_pct",
+      "description": ""
+    },
+    {
+      "name": "student_attendance_year_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_attendance_year_1",
+      "description": ""
+    },
+    {
+      "name": "student_attendance_year_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_attendance_year_2",
+      "description": ""
+    },
+    {
+      "name": "student_growth_description",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_growth_description",
+      "description": ""
+    },
+    {
+      "name": "student_growth_rating",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "student_growth_rating",
+      "description": ""
+    },
+    {
+      "name": "supportive_school_award",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "supportive_school_award",
+      "description": ""
+    },
+    {
+      "name": "supportive_school_award_desc",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "supportive_school_award_desc",
+      "description": ""
+    },
+    {
+      "name": "suspensions_per_100_students",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "suspensions_per_100_students",
+      "description": ""
+    },
+    {
+      "name": "suspensions_per_100_students_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "suspensions_per_100_students_1",
+      "description": ""
+    },
+    {
+      "name": "suspensions_per_100_students_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "suspensions_per_100_students_2",
+      "description": ""
+    },
+    {
+      "name": "teacher_attendance_avg_pct",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "teacher_attendance_avg_pct",
+      "description": ""
+    },
+    {
+      "name": "teacher_attendance_year_1",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "teacher_attendance_year_1",
+      "description": ""
+    },
+    {
+      "name": "teacher_attendance_year_2",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "teacher_attendance_year_2",
+      "description": ""
+    },
+    {
+      "name": "website",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "website",
+      "description": ""
+    },
+    {
+      "name": "zip",
+      "type": "string",
+      "nullable": true,
+      "source_display_name": "zip",
+      "description": ""
+    }
+  ],
+  "rules": {
+    "primary_key": [],
+    "required_columns": [
+      "school_id"
+    ],
+    "allow_extra_columns": true,
+    "naming_conventions": {
+      "lowercase": true,
+      "no_spaces": true
+    },
+    "type_compatibility": {
+      "string_equivalents": [
+        "varchar",
+        "char",
+        "string"
+      ]
+    },
+    "notes": "Because the source is CSV, physical types are declared as string in Glue. Downstream jobs may cast as needed."
+  },
+  "owner": {
+    "team": "data-platform",
+    "contact": "data-platform@example.com"
+  }
+}
